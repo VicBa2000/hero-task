@@ -148,3 +148,34 @@ Bitacora de cambios y decisiones — Hero Task: Dynamic Page Renderer
   - CLAUDE.md regla 5: agregados props invalidas y "toString" a los casos
     borde, y la regla de que los tests prueben lo mismo que produccion.
   Afecta: PageBuilder, proceso.
+
+[2026-10-01] Paso 7 — Twist de IA: suite de tests del PageBuilder
+  - Lista de casos propuesta por la IA y aprobada por el usuario, con una
+    aclaracion suya: cada grupo debe probar AMBOS extremos, lo que debe
+    fallar (entrada mala se omite sin tumbar la pagina) y lo que debe pasar
+    (entrada valida, minima o con campos extra, se renderiza sin warnings).
+    Motivo: un validador demasiado estricto esconderia bloques legitimos en
+    silencio (equivalente a los falsos positivos del sanitizer del Guardian).
+  - src/components/PageBuilder/PageBuilder.test.tsx: 37 tests, todos con el
+    PageBuilder y los componentes reales (sin mocks). Grupos: bloques
+    conocidos y data.json real; Unknown Component Type (slider, aviso en
+    dev, nada en prod, pagina solo de desconocidos, match exacto
+    "Hero" != "hero"); bloques mal formados (null/numero/string/array, type
+    ausente o no string, nombres de Object.prototype); props invalidas por
+    tipo; entrada que no es array; array vacio.
+  - console.warn interceptado y verificado (cuantas veces, con que tipo).
+    NODE_ENV=production simulado con vi.stubEnv.
+  - Comprobacion de que los tests sirven (mutaciones temporales, revertidas
+    con git checkout; 37/37 tras cada una):
+    * M1 sin revision de tipo desconocido -> 19 fallan.
+    * M2 sin validacion de props -> 10 fallan (todos los de props invalidas).
+    * M3 registro como objeto literal -> 5 fallan (toString, constructor...).
+    * M4 aviso visible en produccion -> 3 fallan (los de produccion).
+    * M5 hero exige cta (demasiado estricto) -> 29 fallan, incl. "debe pasar".
+    * M6 plan exige period (demasiado estricto) -> 2 fallan: "debe pasar"
+      minimo y data.json real (Enterprise no trae period).
+  - Verificado: lint, tsc, 37/37.
+  - Aviso detectado: Vite 8 indica que vite-tsconfig-paths ya no hace falta
+    (resolve.tsconfigPaths: true nativo). La guia de Next 16 aun usa el
+    plugin; pendiente de decision del usuario.
+  Afecta: tests.
