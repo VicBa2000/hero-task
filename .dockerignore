@@ -1,0 +1,14 @@
+# Se reconstruyen dentro de la imagen
+node_modules
+.next
+
+# No hacen falta para construir ni correr la app
+.git
+.gitignore
+demo
+*.md
+cambios.txt
+proyectbaseline
+Dockerfile
+docker-compose.yml
+.dockerignore
