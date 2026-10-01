@@ -210,3 +210,25 @@ Bitacora de cambios y decisiones — Hero Task: Dynamic Page Renderer
       docker build falla en "npm test" (1 failed | 36 passed) -> la imagen
       no se construye.
   Afecta: infraestructura, tests.
+
+[2026-10-01] Paso 9 — README (aprobado por el usuario)
+  - README.md reemplaza el de create-next-app. Bilingue (espanol + English
+    version), misma estructura que el del Guardian: que hace + diagrama
+    data.json -> PageBuilder -> componentes; como levantarlo (Docker y sin
+    Docker); como ver el tipo desconocido (aviso en npm run dev, nada en
+    Docker, warn en el log del build); tabla de tests por grupo; tabla de
+    mutaciones M1-M6; decisiones de diseno; limitaciones; estructura.
+  - Agregados respecto a la propuesta (aprobados por el usuario):
+    * Seccion de limitaciones (datos estaticos, validadores a mano,
+      console.warn como unico registro).
+    * Sin "npm start" para produccion local: con output "standalone" Next
+      avisa que next start no funciona (verificado en
+      node_modules/next/dist/server/next.js). Produccion = Docker.
+    * Nota: la pagina se prerenderiza; en Docker un cambio a data.json
+      requiere docker compose up --build.
+  - Verificado: textos del aviso y del warn copiados del codigo; conteos por
+    grupo (4/5/13/10/5) contra la salida de vitest --reporter=verbose,
+    37/37. Las cifras M1-M6 vienen del paso 7 (no se volvieron a medir).
+  - Pendiente: el video. El README enlaza demo/hero-task-demo.mp4 (nombre
+    a confirmar cuando se grabe).
+  Afecta: entregables.
