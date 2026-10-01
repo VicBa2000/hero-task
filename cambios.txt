@@ -179,3 +179,34 @@ Bitacora de cambios y decisiones — Hero Task: Dynamic Page Renderer
     (resolve.tsconfigPaths: true nativo). La guia de Next 16 aun usa el
     plugin; pendiente de decision del usuario.
   Afecta: tests.
+
+[2026-10-01] Paso 8 — Docker + plugin de Vite (ambos aprobados por el usuario)
+  - vitest.config.mts: fuera vite-tsconfig-paths (desinstalado); se usa
+    resolve.tsconfigPaths: true, nativo de Vite 8 (verificado en
+    node_modules/vite/dist/node/index.d.ts). 37/37 y sin el aviso.
+  - Referencia: guia self-hosting local (sin Dockerfile) + ejemplo oficial
+    vercel/next.js examples/with-docker (leido de GitHub).
+  - next.config.ts: output "standalone".
+  - Dockerfile en 3 etapas (dependencies -> builder -> runner), como el
+    ejemplo oficial:
+    * Base node:22-slim. Cambio respecto a lo propuesto (alpine): el ejemplo
+      oficial usa slim (glibc; alpine usa musl). 22 = Node local y
+      @types/node; el ejemplo usa 24.
+    * builder corre "npm test" ANTES de ENV NODE_ENV=production (con
+      production los tests del aviso de dev fallarian) y luego el build.
+    * runner: solo .next/standalone + .next/static, usuario "node" sin
+      privilegios. Sin public/ (no existe desde el paso 4).
+    * NEXT_TELEMETRY_DISABLED=1 (el ejemplo lo deja opcional).
+  - docker-compose.yml: puerto 3000; healthcheck con fetch de Node (slim no
+    trae curl/wget).
+  - .dockerignore: node_modules, .next, .git, demo, docs del proceso.
+  - Verificado desde un clon limpio del repo (commit 4ed72e7):
+    * docker compose up --build: 37/37 dentro del build, build OK, warn del
+      slider una vez en el build, contenedor "healthy".
+    * GET / -> 200; hero, features, pricing, cta en orden; 0 avisos; la
+      palabra "slider" no aparece en el HTML; proceso corre como "node".
+    * Imagen: 421 MB.
+    * Compuerta de tests: con un test roto a proposito (solo en el clon),
+      docker build falla en "npm test" (1 failed | 36 passed) -> la imagen
+      no se construye.
+  Afecta: infraestructura, tests.
