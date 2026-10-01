@@ -200,7 +200,7 @@ Bitacora de cambios y decisiones — Hero Task: Dynamic Page Renderer
   - docker-compose.yml: puerto 3000; healthcheck con fetch de Node (slim no
     trae curl/wget).
   - .dockerignore: node_modules, .next, .git, demo, docs del proceso.
-  - Verificado desde un clon limpio del repo (commit 4ed72e7):
+  - Verificado desde un clon limpio del repo (commit 76d8108):
     * docker compose up --build: 37/37 dentro del build, build OK, warn del
       slider una vez en el build, contenedor "healthy".
     * GET / -> 200; hero, features, pricing, cta en orden; 0 avisos; la
@@ -231,4 +231,16 @@ Bitacora de cambios y decisiones — Hero Task: Dynamic Page Renderer
     37/37. Las cifras M1-M6 vienen del paso 7 (no se volvieron a medir).
   - Pendiente: el video. El README enlaza demo/hero-task-demo.mp4 (nombre
     a confirmar cuando se grabe).
+  Afecta: entregables.
+
+[2026-10-01] Paso 9 — GitHub: repo publico github.com/VicBa2000/hero-task (decision del usuario)
+  - Rama renombrada master -> main (igual que el Guardian).
+  - El primer push fue rechazado (GH007): los commits llevaban el correo
+    personal. Decision del usuario: reescribir autor y committer de los 8
+    commits con el correo noreply de GitHub (git filter-branch --env-filter,
+    fechas intactas) y fijarlo en la config local del repo. Alternativa
+    descartada: desactivar la proteccion en GitHub (el correo quedaria
+    publico).
+  - Cambian los hashes: la referencia del paso 8 se actualizo de 4ed72e7 a
+    76d8108 (mismo contenido).
   Afecta: entregables.
