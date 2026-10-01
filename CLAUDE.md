@@ -92,8 +92,13 @@ Se avanza un paso a la vez; ninguno empieza sin aprobacion del usuario.
   sin discutirlo.
 - El `PageBuilder` y el manejo del tipo desconocido son la logica central
   evaluada: sus tests deben cubrir los casos borde (tipo desconocido, `type`
-  ausente o que no es string, bloque `null`, entrada que no es array, que los
-  bloques validos se sigan renderizando y en orden).
+  ausente o que no es string, bloque `null`, entrada que no es array, tipo
+  conocido con props invalidas, nombres heredados de Object.prototype como
+  `"toString"`, que los bloques validos se sigan renderizando y en orden).
+- Los tests deben probar lo mismo que pasa en produccion: Vitest renderiza
+  como cliente (jsdom) y los bloques son Server Components; un mecanismo que
+  solo funciona en el cliente (ej. error boundary) pasaria en Vitest y
+  fallaria en el servidor (ver cambios.txt, paso 6).
 
 ### 6. Checklist de "terminado"
 El proyecto no se considera terminado hasta que:

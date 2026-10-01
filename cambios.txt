@@ -82,3 +82,69 @@ Bitacora de cambios y decisiones — Hero Task: Dynamic Page Renderer
   - Aun no conectados a page.tsx (paso 6).
   - Verificado: data.json parsea; lint, tsc --noEmit y build OK.
   Afecta: datos, componentes.
+
+[2026-10-01] Investigacion previa al paso 6 — error boundary en Next 16
+  - Docs locales: Next 16.3 estabilizo catchError (next/error), boundary a
+    nivel componente integrado con el router (retry/refresh, limpia el error
+    al navegar, re-lanza errores internos de redirect/notFound).
+  - Leido el fuente (dist/client/components/catch-error.js): con user-agent
+    de bot NO renderiza el fallback; deja subir el error al boundary raiz.
+    En una pagina de CMS, un bloque roto mostraria a Google la pagina de
+    error entera.
+  - Decision del usuario: clase propia de React (getDerivedStateFromError).
+    Motivo: atrapa igual para usuarios y bots; no depende del contexto del
+    router (testeable en Vitest); retry/redirect/notFound no aplican (datos
+    estaticos, bloques sin navegacion).
+  - Pendiente: los docs no dicen que pasa en SSR cuando un Server Component
+    lanza dentro de un boundary cliente -> verificar con build de produccion
+    en el paso 6.
+  Afecta: PageBuilder.
+
+[2026-10-01] Paso 6 — verificacion: el error boundary NO protege en el servidor (HALLAZGO)
+  - Implementados registry.ts, PageBuilder.tsx, UnknownBlock.tsx,
+    BlockErrorBoundary.tsx, PageBuilder.module.css; page.tsx conectado.
+    Lint, tsc y build OK.
+  - Dev con data.json real: 200; hero, features, aviso "slider", pricing,
+    cta en orden; console.warn del slider. OK.
+  - Prueba temporal (pricing sin "plans"; data.json restaurado despues):
+    * dev: GET / -> 500, la pagina entera cae.
+    * build: falla al prerenderizar "/" (la pagina es estatica) -> exit 1.
+  - Causa: los bloques son Server Components; se renderizan en el servidor
+    antes de que exista el arbol cliente donde vive la clase boundary.
+    Un error boundary solo atrapa errores del render en el cliente.
+  - Riesgo detectado: en Vitest (jsdom, render cliente) el boundary SI
+    atrapa el error, asi que un unit test pasaria mientras en produccion la
+    pagina cae. Falsa confianza; documentar en el Prompt Log.
+  - Paso 6 detenido; opciones presentadas al usuario.
+  Afecta: PageBuilder.
+
+[2026-10-01] Paso 6 — Decision del usuario: opcion A (validar props antes de renderizar)
+  - Opciones presentadas: A) validar props en el PageBuilder; B) bloques
+    como Client Components + <Suspense> por bloque (el error igual ocurre en
+    el servidor, el bloque pierde su HTML de servidor, JS innecesario); C)
+    aceptar que el build falle (en un CMS en runtime seria un 500 en vivo).
+  - src/components/PageBuilder/validators.ts: un type guard por bloque
+    (isHeroProps, isFeaturesProps, isPricingProps, isCtaProps) que revisa
+    TODO lo que el componente usa, incluido el tipo (un objeto donde va texto
+    tambien rompe el render). Sin dependencias nuevas.
+  - registry.ts: Map tipo -> { component, isValid }.
+  - PageBuilder.tsx: props invalidas -> console.warn + UnknownBlock
+    ("has invalid props."), mismo trato que el tipo desconocido.
+  - BlockErrorBoundary.tsx eliminado: con bloques de servidor nunca atrapa.
+  - Verificacion de un comentario: se afirmaba que TypeScript obliga a que
+    el validador corresponda al componente. Probado con un archivo temporal:
+    rechaza un validador que garantiza MENOS de lo que el componente usa
+    (isHeroProps para Pricing), pero acepta uno que garantiza de mas
+    (isPricingProps para Hero; tipado estructural). Se probo NoInfer<P>: no
+    cambia nada. Comentario corregido para decir exactamente eso.
+  - Verificado (data.json restaurado tras cada prueba temporal):
+    * lint, tsc --noEmit, build OK.
+    * dev, data real: 200; hero, features, aviso "slider", pricing, cta.
+    * dev, pricing sin plans: 200; aviso "pricing", resto de la pagina OK.
+    * build, pricing sin plans: exit 0 (antes: exit 1).
+    * produccion (next start), data real: 200, 4 bloques, 0 avisos, la
+      palabra "slider" no aparece en el HTML. El warn sale una vez en el
+      build (pagina estatica), no por request.
+  - CLAUDE.md regla 5: agregados props invalidas y "toString" a los casos
+    borde, y la regla de que los tests prueben lo mismo que produccion.
+  Afecta: PageBuilder, proceso.

@@ -1,4 +1,7 @@
-// Esqueleto (paso 4): el PageBuilder se conecta aqui en el paso 6.
+import PageBuilder from "@/components/PageBuilder/PageBuilder";
+import data from "@/data/data.json";
+
+// data.json simula la respuesta de un Headless CMS.
 export default function Home() {
-  return <main />;
+  return <PageBuilder blocks={data} />;
 }

@@ -1,0 +1,11 @@
+/* Aviso de bloque no renderizable; solo aparece en desarrollo. */
+.notice {
+  max-width: 1040px;
+  margin: 24px auto;
+  padding: 16px 20px;
+  border: 2px dashed #d97706;
+  border-radius: 8px;
+  background: rgba(217, 119, 6, 0.08);
+  font-family: ui-monospace, monospace;
+  font-size: 0.9rem;
+}
