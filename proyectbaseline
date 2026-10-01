@@ -1,0 +1,19 @@
+Time Limit: 4-6 Hours. 
+Explicitly required to use Cursor, Claude, Gemini, ChatGPT, or Similar.
+
+Instruction: You are explicitly REQUIRED to use Cursor, Claude, Gemini or ChatGPT to complete this assignment. You must submit your code AND a 'Prompt Log' showing how you directed the AI.
+
+The Task: Build a Dynamic Page Renderer using Next.js/Vue/React (App Router).
+
+1. The Data: Create a hardcoded data.json
+file that mimics a Headless CMS response. It should contain an array of objects, e.g.,
+[{ type: "hero", props: {...}}, { type: "pricing", props: {...}}]
+
+2. The Logic: Build a PageBuilder component that iterates through this array and renders the correct component.
+
+3. The AI Twist: Use AI to generate a unit test suite for your PageBuilder that tests for an "Unknown Component Type" (e.g., if the JSON asks for a slider but you don't have that component, the app should not crash).
+
+Deploy your project in Docker:
+- Add your dockerfile/docker compose to the project.
+
+Record a video of your local environment show you project working and push the video to your github repo along with your code.

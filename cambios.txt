@@ -1,0 +1,68 @@
+Bitacora de cambios y decisiones — Hero Task: Dynamic Page Renderer
+===================================================================
+
+[2026-09-30] Reinicio desde cero (decision del usuario)
+  - Un primer intento de la IA genero scaffold y codigo de golpe, sin reglas
+    ni decisiones acordadas. El usuario lo descarto completo: el objetivo es
+    mostrar la orquestacion, no "lanzar codigo a lo loco".
+  - Se acordo un plan de 9 pasos (ver CLAUDE.md, "Plan de trabajo"); cada
+    paso requiere aprobacion antes de implementarse.
+  Afecta: proceso.
+
+[2026-09-30] Paso 1 — Reglas y bitacora (CLAUDE.md, cambios.txt)
+  - CLAUDE.md adaptado de las reglas del proyecto Guardian: fuente de verdad
+    (proyectbaseline), datos del CMS como no confiables, bitacora por
+    unidad, checklist de terminado y el plan de trabajo.
+  - Stack y herramienta de tests quedan pendientes para el paso 2.
+  Afecta: proceso.
+
+[2026-09-30] Paso 2 — Decision: stack Next.js (App Router) + TypeScript;
+  tests con Vitest + React Testing Library (jsdom). Aprobado por el usuario.
+  Motivo: el enunciado pide "App Router" (concepto de Next.js); Next trae
+  guia oficial de Vitest y output "standalone" para una imagen Docker
+  minima. Jest descartado: mas configuracion con TypeScript en un proyecto
+  nuevo. Registrado en CLAUDE.md.
+  Afecta: todo el proyecto.
+
+[2026-10-01] Paso 3 — Decisiones abiertas del enunciado (todas tomadas por el usuario)
+  - Tipo desconocido (ej. "slider"): en desarrollo se muestra un aviso
+    visible ('"slider" is not a known block type'); en produccion no se
+    pinta nada y queda un console.warn. Motivo: el equipo se entera, el
+    visitante nunca ve errores internos del CMS.
+  - Tipo conocido con props rotas (ej. "pricing" sin "plans"): error
+    boundary por bloque; se cae solo ese bloque, no la pagina. Motivo: el
+    enunciado exige que la app no se rompa y es el mismo riesgo. Mismo
+    tratamiento visual que el tipo desconocido (aviso en dev, nada en prod).
+    A verificar en el paso 6: como se comporta el boundary con Server
+    Components en el render del servidor (leer docs de Next antes).
+  - data.json: array del enunciado + id por bloque: [{ id, type, props }].
+    Motivo: key estable para React e identificar el bloque en los logs.
+  - El data.json real incluye un bloque "slider" sin componente, para que el
+    caso "Unknown Component Type" se vea en la app y en el video.
+  Afecta: datos, PageBuilder, tests.
+
+[2026-10-01] Paso 4 — Esqueleto (aprobado por el usuario)
+  - create-next-app@latest (Next 16.3.8, React 19.2.8): --ts --app --src-dir
+    --eslint, sin Tailwind, npm. proyectbaseline, CLAUDE.md y cambios.txt se
+    sacaron temporalmente (el instalador rechaza carpetas no vacias) y se
+    restauraron.
+  - CLAUDE.md: se conserva el nuestro con "@AGENTS.md" arriba. AGENTS.md
+    (generado por Next) obliga a leer node_modules/next/dist/docs antes de
+    usar una API: refuerza la regla 1.
+  - Tests: vitest 5, @vitejs/plugin-react, jsdom, @testing-library/react y
+    /dom, vite-tsconfig-paths; vitest.config.mts tal cual la guia oficial.
+    Scripts: "test" = vitest run (una pasada, para verificar/CI),
+    "test:watch" = vitest (la guia usa watch por default).
+  - Conflicto de peers: @types/node@^20 del scaffold vs vitest 5 (>=22).
+    Se subio a ^22 (Node local = 22) en vez de --legacy-peer-deps, que
+    oculta conflictos reales.
+  - Limpieza: fuera page.module.css, public/*.svg y contenido de ejemplo;
+    page.tsx y layout.tsx minimos. Se quitaron las fuentes de next/font/google:
+    se descargan en el build y harian depender el build de Docker de red.
+  - Carpetas vacias (.gitkeep): src/data, src/components/blocks,
+    src/components/PageBuilder, src/types.
+  - Verificado: lint OK, build OK. "npm test" sale con 1 ("No test files
+    found"): esperado sin tests; no se agrega --passWithNoTests para que una
+    suite borrada no pase en silencio.
+  - Pendiente (paso 9): README.md sigue siendo el de create-next-app.
+  Afecta: infraestructura.
