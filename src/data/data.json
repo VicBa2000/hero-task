@@ -1,0 +1,52 @@
+[
+  {
+    "id": "hero-1",
+    "type": "hero",
+    "props": {
+      "eyebrow": "Headless CMS demo",
+      "title": "Pages assembled from data, not hardcoded markup",
+      "subtitle": "Every section on this page comes from a JSON array that mimics a CMS response. Reorder it, remove a block or add a new one and the page follows.",
+      "cta": { "label": "See pricing", "href": "#pricing" }
+    }
+  },
+  {
+    "id": "features-1",
+    "type": "features",
+    "props": {
+      "title": "Why a page builder",
+      "items": [
+        { "title": "Editors own the layout", "description": "The order of sections changes without a deploy." },
+        { "title": "One component per block", "description": "Each block type maps to a single, testable React component." },
+        { "title": "Fails soft", "description": "A block the frontend does not know is skipped instead of crashing the page." }
+      ]
+    }
+  },
+  {
+    "id": "slider-1",
+    "type": "slider",
+    "props": {
+      "slides": [{ "image": "/slide-1.png" }, { "image": "/slide-2.png" }]
+    }
+  },
+  {
+    "id": "pricing-1",
+    "type": "pricing",
+    "props": {
+      "anchor": "pricing",
+      "title": "Simple pricing",
+      "plans": [
+        { "name": "Starter", "price": "$0", "period": "month", "features": ["1 site", "Community support"] },
+        { "name": "Pro", "price": "$29", "period": "month", "features": ["10 sites", "Email support", "Custom domains"], "highlighted": true },
+        { "name": "Enterprise", "price": "Custom", "features": ["Unlimited sites", "SSO", "Dedicated support"] }
+      ]
+    }
+  },
+  {
+    "id": "cta-1",
+    "type": "cta",
+    "props": {
+      "title": "Ready to build your next page?",
+      "button": { "label": "Back to top", "href": "#" }
+    }
+  }
+]

@@ -66,3 +66,19 @@ Bitacora de cambios y decisiones — Hero Task: Dynamic Page Renderer
     suite borrada no pase en silencio.
   - Pendiente (paso 9): README.md sigue siendo el de create-next-app.
   Afecta: infraestructura.
+
+[2026-10-01] Paso 5 — data.json y componentes de bloque (aprobado por el usuario)
+  - Decision del usuario: ademas de hero y pricing (los del enunciado) se
+    agregan features y cta, para que la pagina se vea completa en el video.
+  - src/types/blocks.ts: props por bloque (HeroProps, FeaturesProps,
+    PricingProps, CtaProps) y CmsBlock { id?, type: unknown, props?: unknown }.
+  - src/data/data.json: hero-1, features-1, slider-1 (SIN componente, a
+    proposito), pricing-1 (anchor "pricing", destino del boton del hero), cta-1.
+  - src/components/blocks/{Hero,Features,Pricing,Cta}.tsx: componentes
+    simples, sin estado ni hooks (sirven como Server Components). No validan
+    sus props: una prop faltante la atrapa el error boundary del paso 6.
+  - blocks.module.css compartido; tokens de color (claro/oscuro) en
+    globals.css.
+  - Aun no conectados a page.tsx (paso 6).
+  - Verificado: data.json parsea; lint, tsc --noEmit y build OK.
+  Afecta: datos, componentes.
