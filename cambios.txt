@@ -244,3 +244,14 @@ Bitacora de cambios y decisiones — Hero Task: Dynamic Page Renderer
   - Cambian los hashes: la referencia del paso 8 se actualizo de 4ed72e7 a
     76d8108 (mismo contenido).
   Afecta: entregables.
+
+[2026-10-01] Video demo (demo/hero-task-demo.mp4)
+  - Exportado desde CapCut: 95.8 MiB, bajo el limite de 100 MiB por archivo
+    de GitHub. Sin Git LFS, igual que el Guardian (el evaluador no necesita
+    LFS para clonarlo).
+  - Nombre igual al que ya enlazaba el README (paso 8): el README no cambia.
+    demo/ ya estaba en .dockerignore: no viaja en el build context.
+  - Subido desde una segunda maquina con un clon del repo (al dia con
+    origin/main). Ahi se fijo tambien el correo noreply en la config local
+    del repo, porque la config local no viaja con el clon (paso 9).
+  Afecta: entregables.
